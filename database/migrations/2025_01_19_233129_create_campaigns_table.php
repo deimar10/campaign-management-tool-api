@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('campaigns', function (Blueprint $table) {
             $table->id();
-            $table->title();
-            $table->url();
-            $table->status();
+            $table->string('title');
+            $table->string('url');
+            $table->boolean('status')->default(true);
         });
     }
 
