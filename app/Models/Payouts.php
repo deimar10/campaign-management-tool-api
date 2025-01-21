@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Payouts extends Model
 {
+    // Disable created_at & updated_at
+    public $timestamps = false; 
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 

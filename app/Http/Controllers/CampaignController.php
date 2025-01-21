@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
+use App\Models\Payout;
 
 class CampaignController extends Controller {
   // Get all campaigns with payouts
@@ -17,5 +18,40 @@ class CampaignController extends Controller {
     $campaigns = Campaign::with('payouts')->get();
     // Return the campaigns as JSON
     return response()->json($campaigns);
+  }
+
+  /**
+   * Create a new campaign with payouts
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function createCampaign(Request $request)
+  {
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'url' => 'required|url',
+        'status' => 'required|string|in:active,paused',
+        'payouts' => 'required|array',
+        'payouts.*.country' => 'required|string|max:255',
+        'payouts.*.amount' => 'required|numeric|min:0',
+    ]);
+
+    // Convert status to integer
+    $status = $validated['status'] === 'active' ? 1 : 0;
+
+    // Create the campaign
+    $campaign = Campaign::create([
+        'title' => $validated['title'],
+        'url' => $validated['url'],
+        'status' => $status,
+    ]);
+
+    // Add payouts
+    foreach ($validated['payouts'] as $payout) {
+        $campaign->payouts()->create($payout);
+    }
+
+    return response()->json(['message' => 'Campaign created successfully'], 201);
   }
 }
