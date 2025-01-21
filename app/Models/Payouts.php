@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Campaign extends Model
+class Payouts extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -16,14 +16,14 @@ class Campaign extends Model
     * @var list<string>
     */
     protected $fillable = [
-        'title',
-        'url',
-        'status',
+        'campaign_id',
+        'country',
+        'amount'
     ];
 
-    // Define the relationship to Payouts
-    public function payouts()
+    // Define the inverse relationship to Campaign
+    public function campaign()
     {
-        return $this->hasMany(Payouts::class, 'campaign_id');
+        return $this->belongsTo(Campaign::class, 'campaign_id');
     }
 }
