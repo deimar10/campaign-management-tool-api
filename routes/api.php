@@ -8,3 +8,5 @@ use App\Http\Controllers\CampaignController;
 Route::get('/campaigns', [CampaignController::class, 'getCampaigns']);
 // creates campaign with payout(s)
 Route::post('/campaigns/create', [CampaignController::class, 'createCampaign']);
+// update campaign status based on selected id
+Route::put('/campaigns/{campaign}', [CampaignController::class, 'updateCampaign']);

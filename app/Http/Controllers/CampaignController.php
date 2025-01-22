@@ -54,4 +54,27 @@ class CampaignController extends Controller {
 
     return response()->json(['message' => 'Campaign created successfully'], 201);
   }
+
+  /**
+   * Update the specified campaign status.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function updateCampaign(Request $request, $id)
+  {
+    $validated = $request->validate([
+      'status' => 'required|string|in:active,paused',
+    ]);
+
+    // Convert status to integer
+    $status = $validated['status'] === 'active' ? 1 : 0;
+
+    $campaign = Campaign::find($id);
+    $campaign->status = $status;
+    $campaign->save();
+
+    return response()->json(['message' => 'Campaign status changed successfully'], 201);
+  }
 }
