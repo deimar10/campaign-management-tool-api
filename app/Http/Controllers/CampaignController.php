@@ -34,7 +34,7 @@ class CampaignController extends Controller {
         'status' => 'required|string|in:active,paused',
         'payouts' => 'required|array',
         'payouts.*.country' => 'required|string|max:255',
-        'payouts.*.amount' => 'required|numeric|min:0',
+        'payouts.*.amount' => 'required|numeric|min:5',
     ]);
 
     // Convert status to integer
