@@ -75,6 +75,6 @@ class CampaignController extends Controller {
     $campaign->status = $status;
     $campaign->save();
 
-    return response()->json(['message' => 'Campaign status changed successfully'], 201);
+    return response()->json(['message' => 'Campaign status changed successfully'], 200);
   }
 }
