@@ -77,4 +77,18 @@ class CampaignController extends Controller {
 
     return response()->json(['message' => 'Campaign status changed successfully'], 200);
   }
+
+   /**
+   * Delete campaign
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function deleteCampaign($id)
+  {
+    $campaign = Campaign::find($id);
+    $campaign->delete();
+
+    return response()->json(['message' => 'Campaign deleted sucessfully'], 200);
+  }
 }

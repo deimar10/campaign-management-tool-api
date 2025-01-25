@@ -10,3 +10,5 @@ Route::get('/campaigns', [CampaignController::class, 'getCampaigns']);
 Route::post('/campaigns/create', [CampaignController::class, 'createCampaign']);
 // update campaign status based on selected id
 Route::put('/campaigns/{campaign}', [CampaignController::class, 'updateCampaign']);
+// delete campaign based on id
+Route::delete('/campaigns/{campaign}', [CampaignController::class, 'deleteCampaign']);
