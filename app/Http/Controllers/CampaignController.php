@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Campaign;
 use App\Models\Payout;
 
-class CampaignController extends Controller {
+class CampaignController {
 
   public function getCampaigns(): \Illuminate\Http\JsonResponse
   {
