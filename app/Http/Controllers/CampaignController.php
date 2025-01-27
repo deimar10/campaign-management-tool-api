@@ -1,32 +1,26 @@
 <?php
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Campaign;
 use App\Models\Payout;
 
 class CampaignController extends Controller {
-  // Get all campaigns with payouts
 
- /**
-   * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function getCampaigns()
+  public function getCampaigns(): \Illuminate\Http\JsonResponse
   {
     // Retrieve all campaigns with their payouts
     $campaigns = Campaign::with('payouts')->get();
+
+    if ($campaigns->isEmpty()) {
+      return response()->json(['message' => 'No campaigns found'], 200);
+    }
+
     // Return the campaigns as JSON
     return response()->json($campaigns);
   }
 
-  /**
-   * Create a new campaign with payouts
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-  public function createCampaign(Request $request)
+  public function createCampaign(Request $request): \Illuminate\Http\JsonResponse
   {
     $validated = $request->validate([
         'title' => 'required|string|max:255',
@@ -55,14 +49,7 @@ class CampaignController extends Controller {
     return response()->json(['message' => 'Campaign created successfully'], 201);
   }
 
-  /**
-   * Update the specified campaign status.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function updateCampaign(Request $request, $id)
+  public function updateCampaign(Request $request, $id): \Illuminate\Http\JsonResponse
   {
     $validated = $request->validate([
       'status' => 'required|string|in:active,paused',
@@ -78,15 +65,14 @@ class CampaignController extends Controller {
     return response()->json(['message' => 'Campaign status changed successfully'], 200);
   }
 
-   /**
-   * Delete campaign
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function deleteCampaign($id)
+  public function deleteCampaign(int $id): \Illuminate\Http\JsonResponse
   {
     $campaign = Campaign::find($id);
+
+    if (!$campaign) {
+      return response()->json(['message' => 'Campaign not found', 404]);
+    }
+
     $campaign->delete();
 
     return response()->json(['message' => 'Campaign deleted sucessfully'], 200);
