@@ -27,6 +27,6 @@ class Campaign extends Model
     // Define the relationship to Payouts
     public function payouts()
     {
-        return $this->hasMany(Payouts::class, 'campaign_id');
+        return $this->hasMany(Payout::class, 'campaign_id');
     }
 }

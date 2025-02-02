@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Payouts extends Model
+class Payout extends Model
 {
     // Disable created_at & updated_at
     public $timestamps = false; 
