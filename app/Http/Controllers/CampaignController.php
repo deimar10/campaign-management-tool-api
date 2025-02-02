@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
 use App\Models\Payout;
+use Illuminate\Support\Facades\DB;
 
 class CampaignController {
 
@@ -22,31 +23,43 @@ class CampaignController {
 
   public function createCampaign(Request $request): \Illuminate\Http\JsonResponse
   {
-    $validated = $request->validate([
+    try {
+      DB::beginTransaction(); // <= Starting the transaction
+
+      $validated = $request->validate([
         'title' => 'required|string|max:255',
         'url' => 'required|url',
         'status' => 'required|string|in:active,paused',
         'payouts' => 'required|array',
         'payouts.*.country' => 'required|string|max:255',
         'payouts.*.amount' => 'required|numeric|min:5|max:99',
-    ]);
+      ]);
 
-    // Convert status to integer
-    $status = $validated['status'] === 'active' ? 1 : 0;
+      // Convert status to integer
+      $status = $validated['status'] === 'active' ? 1 : 0;
 
-    // Create the campaign
-    $campaign = Campaign::create([
-        'title' => $validated['title'],
-        'url' => $validated['url'],
-        'status' => $status,
-    ]);
+      // Create the campaign
+      $campaign = Campaign::create([
+          'title' => $validated['title'],
+          'url' => $validated['url'],
+          'status' => $status,
+      ]);
 
-    // Add payouts
-    foreach ($validated['payouts'] as $payout) {
-        $campaign->payouts()->create($payout);
+      // Add payouts
+      foreach ($validated['payouts'] as $payout) {
+          $campaign->payouts()->create($payout);
+      }
+        
+      DB::commit(); // <= Commit the changes
+
+      return response()->json(['message' => 'Campaign created successfully'], 201);
+
+    } catch (\Exception $e) {
+        report($e);
+        DB::rollBack(); // <= Rollback in case of an exception
+
+        return response()->json(['message' => 'Failed to create campaign.'], 500);
     }
-
-    return response()->json(['message' => 'Campaign created successfully'], 201);
   }
 
   public function updateCampaign(Request $request, $id): \Illuminate\Http\JsonResponse
