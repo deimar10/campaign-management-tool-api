@@ -64,18 +64,28 @@ class CampaignController {
 
   public function updateCampaign(Request $request, $id): \Illuminate\Http\JsonResponse
   {
-    $validated = $request->validate([
-      'status' => 'required|string|in:active,paused',
-    ]);
+    try {
+      $validated = $request->validate([
+        'status' => 'required|string|in:active,paused',
+      ]);
+  
+      // Convert status to integer
+      $status = $validated['status'] === 'active' ? 1 : 0;
 
-    // Convert status to integer
-    $status = $validated['status'] === 'active' ? 1 : 0;
+      $campaign = Campaign::find($id);
+      if (!$campaign) {
+        return response()->json(['message' => 'Campaign not found'], 404);
+      }
 
-    $campaign = Campaign::find($id);
-    $campaign->status = $status;
-    $campaign->save();
-
-    return response()->json(['message' => 'Campaign status changed successfully'], 200);
+      $campaign->status = $status;
+      $campaign->save();
+      
+      return response()->json(['message' => 'Campaign status changed successfully'], 200);
+    } catch(\Illuminate\Validation\ValidationException $e) {
+        return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'An error occurred while updating the campaign'], 500);
+    }
   }
 
   public function deleteCampaign(int $id): \Illuminate\Http\JsonResponse
